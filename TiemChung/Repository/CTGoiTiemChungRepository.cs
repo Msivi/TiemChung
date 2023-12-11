@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.PortableExecutable;
 using TiemChung.Entity;
 using TiemChung.Repository.Interface;
 
@@ -114,6 +115,39 @@ namespace TiemChung.Repository
                 throw new Exception("not found or already deleted.");
             }
             return entity;
+        }
+
+        //public async Task<string> GetTenVaccineByMaGoiTiemChung(string keyId)
+        //{
+        //    var query = from vaccine in _context.vaccineEntities
+        //                join ctGoiTiemChung in _context.cTGoiTiemChungEntities on vaccine.Id equals ctGoiTiemChung.MaVaccine
+        //                where ctGoiTiemChung.MaGoiTiemChung == keyId && ctGoiTiemChung.DeletedTime == null && vaccine.DeletedTime == null
+        //                select vaccine.TenVaccine;
+
+        //    var tenVaccine = await query.FirstOrDefaultAsync();
+
+        //    if (tenVaccine is null)
+        //    {
+        //        throw new Exception("Not found or already deleted.");
+        //    }
+
+        //    return tenVaccine;
+        //}
+        public async Task<List<string>> GetTenVaccineByMaGoiTiemChung(string keyId)
+        {
+            var query = from vaccine in _context.vaccineEntities
+                        join ctGoiTiemChung in _context.cTGoiTiemChungEntities on vaccine.Id equals ctGoiTiemChung.MaVaccine
+                        where ctGoiTiemChung.MaGoiTiemChung == keyId && ctGoiTiemChung.DeletedTime == null && vaccine.DeletedTime == null
+                        select vaccine.TenVaccine;
+
+            var tenVaccineList = await query.ToListAsync();
+
+            if (tenVaccineList.Count == 0)
+            {
+                throw new Exception("Not found or already deleted.");
+            }
+
+            return tenVaccineList;
         }
 
 

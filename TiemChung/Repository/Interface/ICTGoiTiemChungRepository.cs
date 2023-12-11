@@ -6,9 +6,11 @@ namespace TiemChung.Repository.Interface
     {
         Task<ICollection<CTGoiTiemChungEntity>> GetAllCTGoiTiemChung();
         Task<CTGoiTiemChungEntity> GetCTGoiTiemChungById(string maVaccine, string maNhapVaccine);
+        Task<List<string>> GetTenVaccineByMaGoiTiemChung(string keyId);
         Task<string> CreateCTGoiTiemChung(CTGoiTiemChungEntity entity);
         Task UpdateCTGoiTiemChung(string maVaccine, string maNhapVaccine, CTGoiTiemChungEntity entity);
         Task<CTGoiTiemChungEntity> DeleteCTGoiTiemChung(string maVaccine, string maNhapVaccine, bool isPhysical);
+
 
     }
 }

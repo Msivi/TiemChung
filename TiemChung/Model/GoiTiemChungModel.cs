@@ -9,7 +9,7 @@ namespace TiemChung.Model
         public string MoTa { get; set; }
         public float GiamGia { get; set; }
         public string MaLoaiTiemChung { get; set; }
-        public string MaTTTiemChung { get; set; }
+        //public string MaTTTiemChung { get; set; }
 
     }
 }

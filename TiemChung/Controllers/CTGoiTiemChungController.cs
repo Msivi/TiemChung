@@ -43,6 +43,26 @@ namespace TiemChung.Controllers
             }
         }
         [HttpGet]
+        [Route("/api/[controller]/get-ten-vaccine-by-ma-goi-tiem")]
+        public async Task<ActionResult<List<string>>> GetTenVaccineByMaGoiTiemChung(string keyId)
+        {
+            try
+            {
+                var entity = await _cTGoiTiemChungRepository.GetTenVaccineByMaGoiTiemChung(keyId);
+
+                return Ok(entity);
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new BaseResponseModel<string>(
+                   statusCode: StatusCodes.Status500InternalServerError,
+                   code: "Failed!",
+                   message: ex.Message);
+                return BadRequest(result);
+            }
+        }
+
+        [HttpGet]
         [Route("/api/[controller]/get-all-ct-goi-tiem-chung")]
         public async Task<ActionResult<IEnumerable<CTGoiTiemChungEntity>>> GetAllCTGoiTiemChung()
         {
