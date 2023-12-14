@@ -4,7 +4,7 @@ namespace TiemChung.Repository.Interface
 {
     public interface IVaccineRepository
     {
-        Task<ICollection<VaccineEntity>> GetAllVaccine();
+        Task<ICollection<VaccineEntity>> GetAllVaccine(int page);
         Task<VaccineEntity> GetVaccineById(string Id);
         Task<ICollection<VaccineEntity>> SearchVaccine(string searchKey);
         Task<string> CreateVaccine(VaccineEntity entity);

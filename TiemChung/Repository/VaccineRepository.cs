@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TiemChung.Entity;
+using TiemChung.Model;
 using TiemChung.Repository.Interface;
 
 namespace TiemChung.Repository
@@ -9,6 +10,8 @@ namespace TiemChung.Repository
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        public static int PAGE_SIZE { get; set; } = 5;
+
         public VaccineRepository(AppDbContext Context, IMapper mapper)
         {
             _context = Context;
@@ -73,7 +76,7 @@ namespace TiemChung.Repository
             }
         }
 
-        public async Task<ICollection<VaccineEntity>> GetAllVaccine()
+        public async Task<ICollection<VaccineEntity>> GetAllVaccine(int page)
         {
             try
             {
@@ -85,7 +88,10 @@ namespace TiemChung.Repository
                 {
                     throw new Exception("Empty list!");
                 }
-                return entities;
+                 
+                var result = PaginateList<VaccineEntity>.Create(entities.AsQueryable(), page, PAGE_SIZE);
+                
+                return result;
             }
             catch (Exception ex)
             {
