@@ -21,7 +21,7 @@ namespace TiemChung.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "KhachHang")]
+    //[Authorize(Roles = "KhachHang")]
     public class KhachHangController : ControllerBase
     {
         private readonly IKhachHangRepository _khachHangRepository;
@@ -58,7 +58,7 @@ namespace TiemChung.Controllers
                 return BadRequest(result);
             }
         }
-        [Authorize(Roles = "KhachHang")]
+        //[Authorize(Roles = "KhachHang")]
         [HttpGet]
         [Route("/api/[controller]/get-all-khach-hang")]
         public async Task<ActionResult<IEnumerable<KhachHangEntity>>> GetAllKhachHang()

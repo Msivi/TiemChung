@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
-using System.Reflection.PortableExecutable;
 using System.Text;
 using TiemChung.Entity;
 using TiemChung.Model;
@@ -12,83 +11,25 @@ namespace TiemChung.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CTGoiTiemChungController : ControllerBase
+    public class HoGiaDinhController : ControllerBase
     {
-        private readonly ICTGoiTiemChungRepository _cTGoiTiemChungRepository;
+        private readonly IHoGiaDinhRepository _hoGiaDinh;
         private readonly IMapper _mapper;
         private readonly IDistributedCache _distributedCache;
-        public CTGoiTiemChungController(ICTGoiTiemChungRepository CTGoiTiemChungRepository, IMapper mapper, IDistributedCache distributedCache)
+        public HoGiaDinhController(IHoGiaDinhRepository HoGiaDinhRepository, IMapper mapper, IDistributedCache distributedCache)
         {
-            _cTGoiTiemChungRepository = CTGoiTiemChungRepository;
+            _hoGiaDinh = HoGiaDinhRepository;
             _mapper = mapper;
             _distributedCache = distributedCache;
         }
 
         [HttpGet]
-        [Route("/api/[controller]/get-ct-goi-tiem-chung-by-id")]
-        public async Task<ActionResult<CTGoiTiemChungEntity>> GetCTGoiTiemChungById(string maGoiTiemChung, string maVaccine)
+        [Route("/api/[controller]/get-ho-gia-dinh-by-id")]
+        public async Task<ActionResult<HoGiaDinhEntity>> GetHoGiaDinhById(string id)
         {
             try
             {
-                var entity = await _cTGoiTiemChungRepository.GetCTGoiTiemChungById(maGoiTiemChung,maVaccine);
-
-                return Ok(entity);
-            }
-            catch (Exception ex)
-            {
-                dynamic result = new BaseResponseModel<string>(
-                   statusCode: StatusCodes.Status500InternalServerError,
-                   code: "Failed!",
-                   message: ex.Message);
-                return BadRequest(result);
-            }
-        }
-        //[HttpGet]
-        //[Route("/api/[controller]/get-ten-vaccine-by-ma-goi-tiem")]
-        //public async Task<ActionResult<List<VaccineEntity>>> GetTenVaccineByMaGoiTiemChung(string keyId)
-        //{
-        //    try
-        //    {
-        //        var entity = await _cTGoiTiemChungRepository.GetTenVaccineByMaGoiTiemChung(keyId);
-
-        //        return Ok(entity);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        dynamic result = new BaseResponseModel<string>(
-        //           statusCode: StatusCodes.Status500InternalServerError,
-        //           code: "Failed!",
-        //           message: ex.Message);
-        //        return BadRequest(result);
-        //    }
-        //}
-        [HttpGet]
-        [Route("/api/[controller]/get-ten-vaccine-by-ma-goi-tiem")]
-        public async Task<ActionResult<List<CTGoiTiemChungEntity>>> GetTenVaccineByMaGoiTiemChung(string keyId)
-        {
-            try
-            {
-                var vaccines = await _cTGoiTiemChungRepository.GetVaccinesByMaGoiTiemChung(keyId);
-
-                return Ok(vaccines);
-            }
-            catch (Exception ex)
-            {
-                dynamic result = new BaseResponseModel<string>(
-                   statusCode: StatusCodes.Status500InternalServerError,
-                   code: "Failed!",
-                   message: ex.Message);
-                return BadRequest(result);
-            }
-        }
-
-        [HttpGet]
-        [Route("/api/[controller]/get-all-ct-goi-tiem-chung")]
-        public async Task<ActionResult<IEnumerable<CTGoiTiemChungEntity>>> GetAllCTGoiTiemChung()
-        {
-            try
-            {
-                var entity = await _cTGoiTiemChungRepository.GetAllCTGoiTiemChung();
+                var entity = await _hoGiaDinh.GetHoGiaDinhById(id);
 
                 return Ok(entity);
             }
@@ -102,20 +43,70 @@ namespace TiemChung.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("/api/[controller]/get-all-ho-gia-dinh")]
+        public async Task<ActionResult<IEnumerable<HoGiaDinhEntity>>> GetAllHoGiaDinh()
+        {
+            try
+            {
+                var entity = await _hoGiaDinh.GetAllHoGiaDinh();
 
+                return Ok(entity);
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new BaseResponseModel<string>(
+                   statusCode: StatusCodes.Status500InternalServerError,
+                   code: "Failed!",
+                   message: ex.Message);
+                return BadRequest(result);
+            }
+        }
 
+        [HttpGet]
+        [Route("/api/[controller]/search-ho-gia-dinh")]
+        public async Task<ActionResult<IEnumerable<HoGiaDinhEntity>>> SearchHoGiaDinh(string searchKey)
+        {
+            try
+            {
+                var HoGiaDinhList = await _hoGiaDinh.SearchHoGiaDinh(searchKey);
+                if (!HoGiaDinhList.Any())
+                {
+                    return BadRequest("Not found!");
+                }
+                return Ok(HoGiaDinhList);
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new BaseResponseModel<string>(
+                    statusCode: StatusCodes.Status500InternalServerError,
+                    code: "Failed!",
+                    message: ex.Message);
+                return BadRequest(result);
+            }
+        }
+        //[Authorize(Roles = "NhanVien")]
         [HttpPost]
-        [Route("/api/[controller]/create-ct-goi-tiem-chung")]
-        public async Task<ActionResult<string>> CreateCTGoiTiemChung(CTGoiTiemChungModel model)
+        [Route("/api/[controller]/create-ho-gia-dinh")]
+        public async Task<ActionResult<string>> CreateHoGiaDinh(HoGiaDinhModel model)
         {
             try
             {
                 byte[] userIdBytes = await _distributedCache.GetAsync("UserId"); // Lấy giá trị UserId từ Distributed Cache
                 string userId = Encoding.UTF8.GetString(userIdBytes);
 
-                var mapEntity = _mapper.Map<CTGoiTiemChungEntity>(model);
-                mapEntity.CreateBy = userId;
-                var result = await _cTGoiTiemChungRepository.CreateCTGoiTiemChung(mapEntity);
+                if (string.IsNullOrEmpty(userId))
+                {
+                    var errorMessage = "Lỗi đăng nhập!";
+                    return Ok(new BaseResponseModel<string>(
+                   statusCode: StatusCodes.Status400BadRequest,
+                   code: "Failed!",
+                   data: errorMessage));
+                }
+
+                var entity = _mapper.Map<HoGiaDinhEntity>(model);
+                entity.CreateBy = userId;
+                var result = await _hoGiaDinh.CreateHoGiaDinh(entity);
 
                 return Ok(new BaseResponseModel<string>(
                     statusCode: StatusCodes.Status201Created,
@@ -133,8 +124,8 @@ namespace TiemChung.Controllers
             }
         }
         [HttpPut]
-        [Route("/api/[controller]/update-ct-goi-tiem-chung")]
-        public async Task<ActionResult> UpdateCTGoiTiemChung(string maGoiTiemChung, string maVaccine, CTGoiTiemChungModel entity)
+        [Route("/api/[controller]/update-ho-gia-dinh")]
+        public async Task<ActionResult> UpdateHoGiaDinh(string id, HoGiaDinhModel entity)
         {
             try
             {
@@ -142,14 +133,14 @@ namespace TiemChung.Controllers
                 byte[] userIdBytes = await _distributedCache.GetAsync("UserId"); // Lấy giá trị UserId từ Distributed Cache
                 string userId = Encoding.UTF8.GetString(userIdBytes);
 
-                var mapEntity = _mapper.Map<CTGoiTiemChungEntity>(entity);
+                var mapEntity = _mapper.Map<HoGiaDinhEntity>(entity);
                 mapEntity.CreateBy = userId;
-                await _cTGoiTiemChungRepository.UpdateCTGoiTiemChung(maGoiTiemChung, maVaccine, mapEntity);
+                await _hoGiaDinh.UpdateHoGiaDinh(id, mapEntity);
 
                 return Ok(new BaseResponseModel<string>(
                     statusCode: StatusCodes.Status200OK,
                     code: "Success!",
-                    data: "Updated successfully!"));
+                    data: "Update successfully!"));
             }
             catch (Exception ex)
             {
@@ -160,14 +151,14 @@ namespace TiemChung.Controllers
             }
         }
         [HttpDelete]
-        [Route("/api/[controller]/delete-ct-goi-tiem-chung")]
-        public async Task<ActionResult<CTGoiTiemChungEntity>> DeleteCTGoiTiemChung(string maGoiTiemChung, string maVaccine)
+        [Route("/api/[controller]/delete-ho-gia-dinh")]
+        public async Task<ActionResult<HoGiaDinhEntity>> DeleteHoGiaDinh(string keyId)
         {
 
             try
             {
 
-                await _cTGoiTiemChungRepository.DeleteCTGoiTiemChung(maGoiTiemChung, maVaccine, false);
+                await _hoGiaDinh.DeleteHoGiaDinh(keyId, false);
                 return Ok(new BaseResponseModel<string>(
                     statusCode: StatusCodes.Status200OK,
                     code: "Success!",
@@ -182,6 +173,5 @@ namespace TiemChung.Controllers
                     message: ex.Message));
             }
         }
-         
     }
 }

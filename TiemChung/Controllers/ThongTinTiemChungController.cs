@@ -103,6 +103,27 @@ namespace TiemChung.Controllers
                 return BadRequest(result);
             }
         }
+
+        [HttpGet]
+        [Route("/api/[controller]/get-all-thong-tin-tiem-chung-gia-dinh-by-ma-gia-dinh")]
+        public async Task<ActionResult<IEnumerable<ThongTinTiemChungEntity>>> GetAllThongTinTiemChungGiaDinh(string maHoGiaDinh)
+        {
+            try
+            {
+                var entity = await _thongTinTiemChung.GetAllThongTinTiemChungByIdHoGD(maHoGiaDinh);
+
+
+                return Ok(entity);
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new BaseResponseModel<string>(
+                   statusCode: StatusCodes.Status500InternalServerError,
+                   code: "Failed!",
+                   message: ex.Message);
+                return BadRequest(result);
+            }
+        }
         //============================================================
 
         [HttpGet]
@@ -158,6 +179,36 @@ namespace TiemChung.Controllers
             }
         }
 
+        //khach hang đang ky cho hộ gia đình
+        [HttpPost]
+        [Route("/api/[controller]/create-thong-tin-tiem-chung-gia-dinh")]
+        public async Task<ActionResult<string>> CreateThongTinTiemChungHoGiaDinh(ThongTinTiemChungGiaDinhModel model)
+        {
+            try
+            {
+                byte[] userIdBytes = await _distributedCache.GetAsync("UserId"); // Lấy giá trị UserId từ Distributed Cache
+                string userId = Encoding.UTF8.GetString(userIdBytes);
+
+                var entity = _mapper.Map<ThongTinTiemChungEntity>(model);
+                entity.Id = Guid.NewGuid().ToString("N");
+                entity.MaKhachHang = userId;
+                var result = await _thongTinTiemChung.CreateThongTinTiemChung(entity);
+
+                return Ok(new BaseResponseModel<string>(
+                    statusCode: StatusCodes.Status201Created,
+                    code: "Success!",
+                    data: result));
+            }
+            catch (Exception ex)
+            {
+                dynamic result;
+                result = new BaseResponseModel<string>(
+                   statusCode: StatusCodes.Status500InternalServerError,
+                   code: "Failed!",
+                   message: ex.Message);
+                return BadRequest(result);
+            }
+        }
         //============================================
 
         [HttpPost]

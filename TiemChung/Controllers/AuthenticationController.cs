@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using TiemChung.Entity;
 using TiemChung.Model;
@@ -22,12 +23,14 @@ namespace TiemChung.Controllers
         private readonly IKhachHangRepository _khachHangRepository;
         private readonly INhanVienRepository _nhanVienRepository;
         private readonly AppSetting _appSettings;
+        private readonly AppDbContext _context;
 
-        public AuthenticationController(IKhachHangRepository khachHangRepository, INhanVienRepository nhanVienRepository, IOptions<AppSetting> appSettings)
+        public AuthenticationController(IKhachHangRepository khachHangRepository, INhanVienRepository nhanVienRepository, IOptions<AppSetting> appSettings, AppDbContext Context)
         {
             _khachHangRepository = khachHangRepository;
             _nhanVienRepository = nhanVienRepository;
             _appSettings = appSettings.Value;
+            _context = Context;
         }
 
         [HttpPost]
@@ -83,8 +86,6 @@ namespace TiemChung.Controllers
                 });
             }
         }
-
-
         private string GenerateToken(KhachHangEntity nguoiDung)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
@@ -106,6 +107,66 @@ namespace TiemChung.Controllers
             var token = jwtTokenHandler.CreateToken(tokenDescription);
 
             return jwtTokenHandler.WriteToken(token);
+        }
+
+        //private async Task<TokenModel> GenerateToken(KhachHangEntity nguoiDung)
+        //{
+        //    var jwtTokenHandler = new JwtSecurityTokenHandler();
+        //    var secretKeyBytes = Encoding.UTF8.GetBytes(_appSettings.SecretKey);
+
+        //    var tokenDescription = new SecurityTokenDescriptor
+        //    {
+        //        Subject = new ClaimsIdentity(new[]
+        //        {
+        //        new Claim(ClaimTypes.Name, nguoiDung.TenKhachHang),
+        //        new Claim(ClaimTypes.Role, nguoiDung.Role),
+        //        new Claim("Id", nguoiDung.Id.ToString()),
+
+
+        //        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+        //    }),
+        //        Expires = DateTime.UtcNow.AddMinutes(10),
+        //        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretKeyBytes), SecurityAlgorithms.HmacSha512Signature)
+        //    };
+
+        //    var token = jwtTokenHandler.CreateToken(tokenDescription);
+        //    var accessToken = jwtTokenHandler.WriteToken(token);
+        //    var refreshToken = GenerateRefreshToken();
+
+        //    //return jwtTokenHandler.WriteToken(token);
+        //    var refreshTokenEntity = new RefreshTokenEntity
+        //    {
+        //        Id = Guid.NewGuid(),
+        //        JwtId = token.Id,
+        //        UserId = nguoiDung.Id,
+        //        Token = refreshToken,
+        //        IsUsed = false,
+        //        IsRevoked = false,
+        //        IssuedAt = DateTime.UtcNow,
+        //        ExpiredAt = DateTime.UtcNow.AddHours(1),
+        //    };
+        //    await _context.AddAsync(refreshTokenEntity);
+        //    await _context.SaveChangesAsync();
+
+        //    return new TokenModel
+        //    {
+        //        AccessToken = accessToken,
+        //        RefreshToken = refreshToken,
+        //    };
+
+        //}
+
+
+
+        private string GenerateRefreshToken()
+        {
+            var random = new byte[32];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(random);
+
+                return Convert.ToBase64String(random);
+            }
         }
 
         private string GenerateToken(NhanVienEntity nguoiDung)
@@ -130,6 +191,8 @@ namespace TiemChung.Controllers
 
             return jwtTokenHandler.WriteToken(token);
         }
+
+
 
         [HttpPost]
         [Route("/api/[controller]/change-password")]

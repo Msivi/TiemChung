@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TiemChung;
 
@@ -11,9 +12,11 @@ using TiemChung;
 namespace TiemChung.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231211172320_version3")]
+    partial class version3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -193,29 +196,6 @@ namespace TiemChung.Migrations
                     b.HasIndex("MaLoaiTiemChung");
 
                     b.ToTable("GoiTiemChung");
-                });
-
-            modelBuilder.Entity("TiemChung.Entity.HoGiaDinhEntity", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("CreateBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreateTimes")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTimeOffset?>("DeletedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("TenChuHo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("HoGiaDinh");
                 });
 
             modelBuilder.Entity("TiemChung.Entity.KhachHangEntity", b =>
@@ -466,9 +446,6 @@ namespace TiemChung.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("CMND")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("CreateBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -501,9 +478,6 @@ namespace TiemChung.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("MaHoGiaDinh")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("MaKhachHang")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -514,17 +488,12 @@ namespace TiemChung.Migrations
                     b.Property<DateTime?>("NgayTiem")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("TenNguoiDK")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("TrangThai")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("MaGoiTiemChung");
-
-                    b.HasIndex("MaHoGiaDinh");
 
                     b.HasIndex("MaKhachHang");
 
@@ -732,11 +701,6 @@ namespace TiemChung.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("TiemChung.Entity.HoGiaDinhEntity", "HoGiaDinh")
-                        .WithMany("ThongTinTiemChung")
-                        .HasForeignKey("MaHoGiaDinh")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("TiemChung.Entity.KhachHangEntity", "KhachHang")
                         .WithMany("ThongTinTiemChung")
                         .HasForeignKey("MaKhachHang")
@@ -744,8 +708,6 @@ namespace TiemChung.Migrations
                         .IsRequired();
 
                     b.Navigation("GoiTiemChung");
-
-                    b.Navigation("HoGiaDinh");
 
                     b.Navigation("KhachHang");
                 });
@@ -776,11 +738,6 @@ namespace TiemChung.Migrations
                 {
                     b.Navigation("CTGoiTiemChung");
 
-                    b.Navigation("ThongTinTiemChung");
-                });
-
-            modelBuilder.Entity("TiemChung.Entity.HoGiaDinhEntity", b =>
-                {
                     b.Navigation("ThongTinTiemChung");
                 });
 

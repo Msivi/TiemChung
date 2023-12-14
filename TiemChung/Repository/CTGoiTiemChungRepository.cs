@@ -133,23 +133,39 @@ namespace TiemChung.Repository
 
         //    return tenVaccine;
         //}
-        public async Task<List<string>> GetTenVaccineByMaGoiTiemChung(string keyId)
+        //public async Task<List<string>> GetTenVaccineByMaGoiTiemChung(string keyId)
+        //{
+        //    var query = from vaccine in _context.vaccineEntities
+        //                join ctGoiTiemChung in _context.cTGoiTiemChungEntities on vaccine.Id equals ctGoiTiemChung.MaVaccine
+        //                where ctGoiTiemChung.MaGoiTiemChung == keyId && ctGoiTiemChung.DeletedTime == null && vaccine.DeletedTime == null
+        //                select vaccine.TenVaccine;
+
+        //    var tenVaccineList = await query.ToListAsync();
+
+        //    if (tenVaccineList.Count == 0)
+        //    {
+        //        throw new Exception("Not found or already deleted.");
+        //    }
+
+        //    return tenVaccineList;
+        //}
+
+        public async Task<List<CTGoiTiemChungEntity>> GetVaccinesByMaGoiTiemChung(string keyId)
         {
             var query = from vaccine in _context.vaccineEntities
                         join ctGoiTiemChung in _context.cTGoiTiemChungEntities on vaccine.Id equals ctGoiTiemChung.MaVaccine
                         where ctGoiTiemChung.MaGoiTiemChung == keyId && ctGoiTiemChung.DeletedTime == null && vaccine.DeletedTime == null
-                        select vaccine.TenVaccine;
+                        select ctGoiTiemChung;
 
-            var tenVaccineList = await query.ToListAsync();
+            var vaccineList = await query.ToListAsync();
 
-            if (tenVaccineList.Count == 0)
+            if (vaccineList.Count == 0)
             {
                 throw new Exception("Not found or already deleted.");
             }
 
-            return tenVaccineList;
+            return vaccineList;
         }
-
 
         public async Task UpdateCTGoiTiemChung(string maGoiTiemChung, string maVaccine, CTGoiTiemChungEntity entity)
         {

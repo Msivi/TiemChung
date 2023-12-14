@@ -10,6 +10,8 @@ namespace TiemChung.Entity
         public int LanTiem { get; set; }
         public DateTime? GioTiem { get; set; }
         public string DiaDiemTiem { get; set; }
+        public string? CMND { get; set; }
+        public string? TenNguoiDK { get; set; }
         public string? KetQua { get; set; }
         public string? TrangThai { get; set; }
         public string? HTTruocTiem { get; set; }
@@ -22,6 +24,11 @@ namespace TiemChung.Entity
         [ForeignKey("GoiTiemChung")]
         public string MaGoiTiemChung { get; set; }
         public virtual GoiTiemChungEntity GoiTiemChung { get; set; }
-        
+
+        [ForeignKey("HoGiaDinh")]
+        public string? MaHoGiaDinh { get; set; }
+        public virtual HoGiaDinhEntity? HoGiaDinh { get; set; }
+
+
     }
 }

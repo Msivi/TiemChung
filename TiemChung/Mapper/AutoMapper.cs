@@ -20,6 +20,8 @@
                 c.AddProfile(new CTVaccineProfile());
                 c.AddProfile(new ThongTinTiemChungKhachHangProfile());
                 c.AddProfile(new CTGoiTiemChungProfile());
+                c.AddProfile(new HoGiaDinhProfile());
+                c.AddProfile(new ThongTinTiemChungGiaDinhProfile());
             });
             return services;
         }

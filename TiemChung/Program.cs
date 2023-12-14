@@ -66,6 +66,7 @@ builder.Services.AddScoped<ICTVaccineRepository, CTVaccineRepository>();
 builder.Services.AddScoped<IXuatVaccineRepository, XuatVaccineRepository>();
 builder.Services.AddScoped<ICTXuatVaccineRepository, CTXuatVaccineRepository>();
 builder.Services.AddScoped<ICTGoiTiemChungRepository, CTGoiTiemChungRepository>();
+builder.Services.AddScoped<IHoGiaDinhRepository, HoGiaDinhRepository>();
 //====================================================================================
 
 builder.Services.AddAutoMapper(typeof(Program));

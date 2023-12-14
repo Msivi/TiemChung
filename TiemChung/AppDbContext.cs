@@ -50,6 +50,7 @@ namespace TiemChung
         public DbSet<ThongTinTiemChungEntity> thongTinTiemChungEnities { get; set; }
         public DbSet<VaccineEntity> vaccineEntities  { get; set; }
         public DbSet<XuatVaccineEntity> xuatVaccineEntities  { get; set; }
-
-}
+        public DbSet<RefreshTokenEntity> refreshTokenEntities { get; set; }
+        public DbSet<HoGiaDinhEntity> hoGiaDinhEntities { get; set; }
+    }
 }

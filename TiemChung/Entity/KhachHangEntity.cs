@@ -12,5 +12,6 @@ namespace TiemChung.Entity
 
         public string Role { get; set; } = "KhachHang";
         public virtual ICollection<ThongTinTiemChungEntity>? ThongTinTiemChung { get; set; }
+        public virtual ICollection<RefreshTokenEntity>? RefreshTokens { get; set; }
     }
 }

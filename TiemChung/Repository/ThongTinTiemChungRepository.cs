@@ -35,6 +35,23 @@ namespace TiemChung.Repository
 
             return mapEntity.Id;
         }
+        // gia dinh
+        public async Task<string> CreateThongTinTiemChungHoGiaDinh(ThongTinTiemChungEntity entity)
+        {
+            var existingThongTinTiemChung = await _context.thongTinTiemChungEnities
+              .FirstOrDefaultAsync(c => c.Id == entity.Id && (c.DeletedTime == null || c.DeletedTime != null));
+
+            if (existingThongTinTiemChung != null)
+            {
+                throw new Exception(message: "Id is already exist!");
+            }
+
+            var mapEntity = _mapper.Map<ThongTinTiemChungEntity>(entity);
+            await _context.thongTinTiemChungEnities.AddAsync(mapEntity);
+            await _context.SaveChangesAsync();
+
+            return mapEntity.Id;
+        }
         //=========================================================
         public async Task<string> CreateThongTinTiemChung(ThongTinTiemChungEntity entity)
         {
@@ -90,16 +107,16 @@ namespace TiemChung.Repository
         {
             try
             {
-                 
+
                 var entities = await _context.thongTinTiemChungEnities
-                   .Where(c => c.DeletedTime != null && c.DeletedTime>= ngayBD && c.DeletedTime<=NgayKT)
+                   .Where(c => c.DeletedTime != null && c.DeletedTime >= ngayBD && c.DeletedTime <= NgayKT)
                    /*.ToListAsync()*/
                    .CountAsync();
                 if (entities == 0)
                 {
                     throw new Exception("Không có khách hàng đã hủy!");
                 }
-                 
+
                 return entities;
 
             }
@@ -138,7 +155,7 @@ namespace TiemChung.Repository
                 string userId = Encoding.UTF8.GetString(userIdBytes);
 
                 var entities = await _context.thongTinTiemChungEnities
-                     .Where(c => c.DeletedTime == null && c.MaKhachHang==userId)
+                     .Where(c => c.DeletedTime == null && c.MaKhachHang == userId)
                      .ToListAsync();
 
                 if (entities is null)
@@ -164,6 +181,26 @@ namespace TiemChung.Repository
                 throw new Exception("not found or already deleted.");
             }
             return entity;
+        }
+
+        public async Task<ICollection<ThongTinTiemChungEntity>> GetAllThongTinTiemChungByIdHoGD(string id)
+        {
+            try
+            {
+                var entities = await _context.thongTinTiemChungEnities
+                     .Where(c =>c.MaHoGiaDinh==id && c.DeletedTime == null)
+                     .ToListAsync();
+
+                if (entities is null)
+                {
+                    throw new Exception("Empty list!");
+                }
+                return entities;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<ICollection<ThongTinTiemChungEntity>> SearchThongTinTiemChung(string searchKey)
