@@ -231,7 +231,11 @@ namespace TiemChung.Repository
             {
                 throw new Exception(message: "Không tìm thấy thông tin tiêm chủng!");
             }
-            
+
+            if (existingThongTinTiemChung.NgayDangKy > entity.NgayTiem)
+            {
+                throw new Exception(message: "Ngày tiêm phải sau ngày đăng ký!");
+            }
             _context.Entry(existingThongTinTiemChung).CurrentValues.SetValues(entity);
             await _context.SaveChangesAsync();
             
@@ -251,6 +255,10 @@ namespace TiemChung.Repository
             {
                 throw new Exception(message: "Không tìm thấy thông tin tiêm chủng!");
             }
+            if(existingThongTinTiemChung.NgayDangKy> entity.NgayTiem)
+            {
+                throw new Exception(message: "Ngày tiêm phải sau ngày đăng ký!");
+            }    
             existingThongTinTiemChung.NgayTiem = entity.NgayTiem;
             existingThongTinTiemChung.GioTiem = entity.GioTiem;
             existingThongTinTiemChung.KetQua = entity.KetQua;

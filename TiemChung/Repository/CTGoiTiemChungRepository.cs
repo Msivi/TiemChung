@@ -42,8 +42,10 @@ namespace TiemChung.Repository
             {
                 throw new Exception("Mã Vaccine không tồn tại!");
             }
+             
 
-            existingGoiTiemChung.TongTien = existingVaccine.GiaTien * entity.SoLuong;
+            var giamGia = existingGoiTiemChung.GiamGia != 0 ? existingVaccine.GiaTien * entity.SoLuong * existingGoiTiemChung.GiamGia : 0;
+            existingGoiTiemChung.TongTien += existingVaccine.GiaTien * entity.SoLuong - giamGia;
             _context.goiTiemChungEntities.Update(existingGoiTiemChung);
 
             var mapEntity = _mapper.Map<CTGoiTiemChungEntity>(entity);

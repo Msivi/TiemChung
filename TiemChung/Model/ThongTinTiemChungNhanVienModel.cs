@@ -9,7 +9,7 @@
         public string? TrangThai { get; set; }
         public string? HTTruocTiem { get; set; }
         public string? HTSauTiem { get; set; }
-        public string MaGoiTiemChung { get; set; }
+        //public string MaGoiTiemChung { get; set; }
 
     }
 }
