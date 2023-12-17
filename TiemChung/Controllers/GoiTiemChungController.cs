@@ -44,11 +44,11 @@ namespace TiemChung.Controllers
         }
         [HttpGet]
         [Route("/api/[controller]/get-all-goi-tiem-chung")]
-        public async Task<ActionResult<IEnumerable<GoiTiemChungEntity>>> GetAllGoiTiemChung()
+        public async Task<ActionResult<IEnumerable<GoiTiemChungEntity>>> GetAllGoiTiemChung(string? sortBy, int page)
         {
             try
             {
-                var entity = await _goiTiemChung.GetAllGoiTiemChung();
+                var entity = await _goiTiemChung.GetAllGoiTiemChung(sortBy, page);
 
                 return Ok(entity);
             }

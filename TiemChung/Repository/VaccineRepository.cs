@@ -10,7 +10,7 @@ namespace TiemChung.Repository
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
-        public static int PAGE_SIZE { get; set; } = 5;
+        public static int PAGE_SIZE { get; set; } = 6;
 
         public VaccineRepository(AppDbContext Context, IMapper mapper)
         {
@@ -76,10 +76,11 @@ namespace TiemChung.Repository
             }
         }
 
-        public async Task<ICollection<VaccineEntity>> GetAllVaccine(int page)
+        public async Task<ICollection<VaccineEntity>> GetAllVaccine(string? sortBy, int page)
         {
             try
             {
+
                 var entities = await _context.vaccineEntities
                      .Where(c => c.DeletedTime == null)
                      .ToListAsync();
@@ -88,7 +89,28 @@ namespace TiemChung.Repository
                 {
                     throw new Exception("Empty list!");
                 }
-                 
+                if (string.IsNullOrEmpty(sortBy))
+                {
+                    sortBy = "ten_acs";  
+                }
+                entities = entities.OrderBy(c => c.TenVaccine).ToList();                 
+                if(!string.IsNullOrEmpty(sortBy))
+                {
+                    switch(sortBy)
+                    {
+                        case "gia_acs":
+                            entities=entities.OrderBy(c => c.GiaTien).ToList(); 
+                            break;
+                        case "gia_desc":
+                            entities = entities.OrderByDescending(c => c.GiaTien).ToList();
+                            break;
+                        case "ten_acs":
+                            entities = entities.OrderBy(c => c.TenVaccine).ToList();
+                            break;
+                    }
+                         
+                }
+
                 var result = PaginateList<VaccineEntity>.Create(entities.AsQueryable(), page, PAGE_SIZE);
                 
                 return result;

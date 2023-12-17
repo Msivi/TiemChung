@@ -5,7 +5,7 @@ namespace TiemChung.Repository.Interface
 {
     public interface IGoiTiemChungRepository
     {
-        Task<ICollection<GoiTiemChungEntity>> GetAllGoiTiemChung();
+        Task<ICollection<GoiTiemChungEntity>> GetAllGoiTiemChung(string sortBy, int page);
         Task<GoiTiemChungEntity> GetGoiTiemChungById(string Id);
         Task<ICollection<GoiTiemChungEntity>> SearchGoiTiemChung(string searchKey);
         Task<string> CreateGoiTiemChung(GoiTiemChungEntity entity);

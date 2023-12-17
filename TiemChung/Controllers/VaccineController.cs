@@ -44,11 +44,11 @@ namespace TiemChung.Controllers
         }
         [HttpGet]
         [Route("/api/[controller]/get-all-vaccine")]
-        public async Task<ActionResult<ICollection<VaccineEntity>>> GetAllVaccine(int page)
+        public async Task<ActionResult<ICollection<VaccineEntity>>> GetAllVaccine(string? sortBy, int page)
         {
             try
             {
-                var entity = await _vaccine.GetAllVaccine(page);
+                var entity = await _vaccine.GetAllVaccine(sortBy, page);
 
                 return Ok(entity);
             }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using iTextSharp.text;
 using Microsoft.EntityFrameworkCore;
 using TiemChung.Entity;
 using TiemChung.Model;
@@ -10,6 +11,7 @@ namespace TiemChung.Repository
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        public static int PAGE_SIZE { get; set; } = 6;
         public GoiTiemChungRepository(AppDbContext Context, IMapper mapper)
         {
             _context = Context;
@@ -77,7 +79,7 @@ namespace TiemChung.Repository
             }
         }
 
-        public async Task<ICollection<GoiTiemChungEntity>> GetAllGoiTiemChung()
+        public async Task<ICollection<GoiTiemChungEntity>> GetAllGoiTiemChung(string sortBy, int page)
         {
             try
             {
@@ -89,7 +91,30 @@ namespace TiemChung.Repository
                 {
                     throw new Exception("Empty list!");
                 }
-                return entities;
+                if (string.IsNullOrEmpty(sortBy))
+                {
+                    sortBy = "giamGia_acs";
+                }
+                //entities = entities.OrderByDescending(c => c.GiamGia).ToList();
+                if (!string.IsNullOrEmpty(sortBy))
+                {
+                    switch (sortBy)
+                    {
+                        case "tongTien_acs":
+                            entities = entities.OrderBy(c => c.TongTien).ToList();
+                            break;
+                        case "tongTien_desc":
+                            entities = entities.OrderByDescending(c => c.TongTien).ToList();
+                            break;
+                        case "giamGia_acs":
+                            entities = entities.OrderByDescending(c => c.GiamGia).ToList();
+                            break;
+                    }
+
+                }
+                var result = PaginateList<GoiTiemChungEntity>.Create(entities.AsQueryable(), page, PAGE_SIZE);
+
+                return result;
             }
             catch (Exception ex)
             {
